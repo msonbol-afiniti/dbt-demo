@@ -1,0 +1,7 @@
+version: 2
+
+models:
+  - name: aca
+    description: >
+      All Calls Archive. ACA is a dataset produced by joining calls data and sales data.
+      Composed of Switch Call Log and Client Outcome Data

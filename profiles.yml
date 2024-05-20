@@ -1,0 +1,22 @@
+my_dbt_demo:
+  target: my_dev_db
+  outputs:
+    my_dev_db:
+      type: postgres
+      host: localhost
+      port: 5432
+      user: sample_user
+      pass: ${DB_PASSWORD}
+      dbname: new_sample_db
+      schema: dev
+      threads: 1
+
+    my_prod_db:
+      type: postgres
+      host: localhost
+      port: 5432
+      user: sample_user
+      pass: ${DB_PASSWORD}
+      dbname: new_sample_db
+      schema: prod
+      threads: 1
