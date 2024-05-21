@@ -223,7 +223,7 @@ models:
   - name: vaca
     description: ""
 ```
-**16- create a new file called aca.sql under the core folder"
+**16- create a new file called aca.sql under the core folder**
 ```sql
 {{ config(materialized='table') }}
 with cte_calls as (
