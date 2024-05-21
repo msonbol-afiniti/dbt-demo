@@ -17,19 +17,29 @@ Try running the following commands:
 
 ### Steps
 **1- create a virutal environment**  
+```shell
 python -m venv dbt-env              # create the environment  
+```
 
 **2- activate the virtual environment**  
+```shell
 dbt-env\Scripts\activate            # activate the environment for Windows  
+```
 
 **3- install dbt and postgres adaptor**   
+```shell
 python -m pip install dbt-core dbt-postgres  
+```shell
 
 **4- validate installation**  
+```shell
 dbt --version  
+```
 
 **5- initialize a dbt project and follow the prompt**   
-dbt init  
+```shell
+dbt init
+```  
 
 **6- change dbt environment file to point to local profiles.yml instead of default one in user directory**
 ```shell
