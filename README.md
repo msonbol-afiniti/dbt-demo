@@ -121,7 +121,8 @@ models:
       +docs:
           node_color: "red"
 ```
-**11- create a new folder under models called staging**
+**11- create a new folder under models called staging**  
+
 **12- create a new file under staging called schema.yml, and define the source tables**
 ```yaml
 version: 2
@@ -135,8 +136,7 @@ sources:
     tables:
       - name: callrecords
       - name: outcomes
-         # freshness:
-           # error_after: {count: 6, period: hour}
+
 models:
   - name: stg_callrecords
     description: ""
@@ -161,11 +161,12 @@ select
     cast(cust_id as varchar(5)) as cust_id,
     -- benchmark
     cast(benchmark as integer) as benchmark,
+    -- agent site
+    cast(agent_site as varchar(5)) as agent_site,
     -- timestamps
     cast(starttime as timestamp) as starttime,
     cast(endtime as timestamp) as endtime,
-    -- agent site
-    cast(agent_site as varchar(5)) as agent_site
+    now() as insert_time
 from cte_callrecords
 where rn = 1
 
@@ -192,7 +193,8 @@ select
     -- outcome
     cast(sale_flag as integer) as sale_flag,
     -- timestamps
-    cast(sale_time as timestamp) as sale_time
+    cast(sale_time as timestamp) as sale_time,
+    now() as insert_time
 from cte_outcomes
 
 -- dbt build --select <model.sql> --vars '{'is_test_run: false}'
@@ -202,7 +204,8 @@ from cte_outcomes
 
 {% endif %}
 ```
-**15- create a new folder under models callded core**
+**15- create a new folder under models callded core**  
+
 **16- create a new file called schema.yml under the core folder**
 ```yaml
 version: 2
@@ -254,7 +257,8 @@ from {{ref('aca')}}
 
 {% endif %}
 ```
-**19- create a new directory called reporting under models**
+**19- create a new directory called reporting under models**  
+
 **20- create a new file called schema.yml under the reporting folder**
 ```yml
 version: 2
@@ -513,8 +517,11 @@ Note: Freshness can be tested on database and tables, with or without a loaded_a
               severity: warn
 ```
 
-**29- version control with git**
+**29- version control with git**  
 
+**30- run with test_vars set to false, and deploy to prod**
+```shell
+```
 
 ### git commands  
 echo "# dbt-demo" >> README.md  
@@ -533,5 +540,3 @@ dbt run
 dbt docs generate  
 dbt docs serve  
 
-
-# 
