@@ -402,14 +402,25 @@ from pivoted_view
 {% endif %}
 ```
 
-**23- run dbt commands**
+**23- setup packages.yml and download packages**
+```yml
+packages:
+  - package: dbt-labs/dbt_utils
+    version: 1.1.1
+
+  - package: dbt-labs/codegen
+    version: 0.12.1
+```
+
+**24- run dbt commands**
 ```shell
+dbt deps
 dbt build
 dbt docs generate
 dbt docs serve
 ```
 
-**24- add documentation to staging's schema.yml**
+**25- add documentation to staging's schema.yml**
 ```yml
 version: 2
 
@@ -500,7 +511,7 @@ models:
         description: The timestamp of the sale interaction
 ```
 
-**25- add unit tests to staging's schema.yml: freshness test**
+**26- add unit tests to staging's schema.yml: freshness test**
 ```yml
 # line 24        
         freshness:
@@ -510,7 +521,7 @@ models:
 ```
 Note: Freshness can be tested on database and tables, with or without a loaded_at_field.
 
-**26- add unit tests to staging's schema.yml: primary key test**
+**27- add unit tests to staging's schema.yml: primary key test**
 ```yml
 # line 38
         data_tests:
@@ -521,7 +532,7 @@ Note: Freshness can be tested on database and tables, with or without a loaded_a
               # severity: warn
 ```
 
-**27- add unit tests to staging's schema.yml: accepted values**
+**28- add unit tests to staging's schema.yml: accepted values**
 ```yml
 # line 80
         data_tests:
@@ -530,9 +541,9 @@ Note: Freshness can be tested on database and tables, with or without a loaded_a
               severity: warn
 ```
 
-**28- version control with git**  
+**29- version control with git**  
 
-**29- run with test_vars set to false, and deploy to prod**
+**30- run with test_vars set to false, and deploy to prod**
 ```shell
 ```
 
