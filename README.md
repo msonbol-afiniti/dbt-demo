@@ -29,7 +29,7 @@ dbt-env\Scripts\activate            # activate the environment for Windows
 **3- install dbt and postgres adaptor**   
 ```shell
 python -m pip install dbt-core dbt-postgres  
-```shell
+```
 
 **4- validate installation**  
 ```shell
