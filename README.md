@@ -36,24 +36,19 @@ python -m pip install dbt-core dbt-postgres
 dbt --version  
 ```
 
-**5- initialize a dbt project and follow the prompt**   
-```shell
-dbt init
-```  
-
-**6- change dbt environment file to point to local profiles.yml instead of default one in user directory**
+**5- change dbt environment file to point to local profiles.yml instead of default one in user directory**follow the prompt**   
 ```shell
 $env:DBT_PROFILES_DIR="C:\Users\mina.sonbol\Documents\dbt_projects\dbt_demo_1"
-```
+```  
 
-**7- encrypt password**   
+**6- encrypt password**   
 ```shell
 $env:DB_PASSWORD = "sample_password"  
 echo $env:DB_PASSWORD  
 # change password to ${DB_PASSWORD} in profiles.yml  
 ```
 
-**8- create the profile.yml file in the project directory or the user's home directory and setup the db connection**   
+**7- create the profile.yml file in the project directory or the user's home directory and setup the db connection**   
 ```shell
 dbt init my-project
 ```
@@ -82,11 +77,13 @@ my_dbt_demo:
       threads: 1  
 ```
  
-**9- test connection**  
+**8- test connection**  
+```shell
 dbt debug --target my_dev_db  
 dbt debug --target my_prod_db  
+```
 
-**10- double check the profile used in the dbt_project.yml file, and add the models under the models section**
+**9- double check the profile used in the dbt_project.yml file, and add the models under the models section**
 ```yml
 
 # Name your project! Project names should contain only lowercase characters
@@ -131,9 +128,9 @@ models:
       +docs:
           node_color: "red"
 ```
-**11- create a new folder under models called staging**  
+**10- create a new folder under models called staging**  
 
-**12- create a new file under staging called schema.yml, and define the source tables**
+**11- create a new file under staging called schema.yml, and define the source tables**
 ```yaml
 version: 2
 
@@ -153,7 +150,7 @@ models:
   - name: stg_outcomes
     description: ""
 ```
-**13- create a new file called stg_callrecords.sql under the staging folder**
+**12- create a new file called stg_callrecords.sql under the staging folder**
 ```sql
 {{ config(materialized='table') }}
 
@@ -187,7 +184,7 @@ where rn = 1
 
 {% endif %}
 ``` 
-**14- create a new file called stg_outcomes.sql under the staging folder**
+**13- create a new file called stg_outcomes.sql under the staging folder**
 ```sql
 {{ config(materialized='table') }}
 
@@ -214,9 +211,9 @@ from cte_outcomes
 
 {% endif %}
 ```
-**15- create a new folder under models callded core**  
+**14- create a new folder under models callded core**  
 
-**16- create a new file called schema.yml under the core folder**
+**15- create a new file called schema.yml under the core folder**
 ```yaml
 version: 2
 
@@ -226,7 +223,7 @@ models:
   - name: vaca
     description: ""
 ```
-**17- create a new file called aca.sql under the core folder"
+**16- create a new file called aca.sql under the core folder"
 ```sql
 {{ config(materialized='table') }}
 with cte_calls as (
@@ -254,9 +251,15 @@ with cte_calls as (
 
 {% endif %}
 ```
-**18- create a new file called vaca.sql under the core folder**
+**17- create a new file called vaca.sql under the core folder**
 ```sql
-{{ config(materialized='view') }}
+{{ 
+    config(
+        materialized='view',
+        docs={'node_color': 'purple'}
+      ) 
+}}
+
 select *
 from {{ref('aca')}}
 
@@ -267,9 +270,9 @@ from {{ref('aca')}}
 
 {% endif %}
 ```
-**19- create a new directory called reporting under models**  
+**18- create a new directory called reporting under models**  
 
-**20- create a new file called schema.yml under the reporting folder**
+**19- create a new file called schema.yml under the reporting folder**
 ```yml
 version: 2
 
@@ -281,7 +284,7 @@ models:
   - name: site_analysis_pivot
     description: ""
 ```
-**21- create a new file called portal.sql under the reporting folder**
+**20- create a new file called portal.sql under the reporting folder**
 ```sql
 {{ config(materialized='view') }}
 
@@ -323,7 +326,7 @@ from cte_incr
 
 {% endif %}
 ```
-**22- create a new file called site_analysis.sql under the reporting folder**
+**21- create a new file called site_analysis.sql under the reporting folder**
 ```sql
 {{ config(materialized='view') }}
 
@@ -367,7 +370,7 @@ from cte_incr
 
 {% endif %}
 ```
-**23- create a new file called site_analysis_pivot.sql under the reporting folder**
+**22- create a new file called site_analysis_pivot.sql under the reporting folder**
 ```sql
 {% set categories = dbt_utils.get_column_values(ref('site_analysis'), 'calldate') %}
 
@@ -399,14 +402,14 @@ from pivoted_view
 {% endif %}
 ```
 
-**24- run dbt commands**
+**23- run dbt commands**
 ```shell
 dbt build
 dbt docs generate
 dbt docs serve
 ```
 
-**25- add documentation to staging's schema.yml**
+**24- add documentation to staging's schema.yml**
 ```yml
 version: 2
 
@@ -497,7 +500,7 @@ models:
         description: The timestamp of the sale interaction
 ```
 
-**26- add unit tests to staging's schema.yml: freshness test**
+**25- add unit tests to staging's schema.yml: freshness test**
 ```yml
 # line 24        
         freshness:
@@ -507,7 +510,7 @@ models:
 ```
 Note: Freshness can be tested on database and tables, with or without a loaded_at_field.
 
-**27- add unit tests to staging's schema.yml: primary key test**
+**26- add unit tests to staging's schema.yml: primary key test**
 ```yml
 # line 38
         data_tests:
@@ -518,7 +521,7 @@ Note: Freshness can be tested on database and tables, with or without a loaded_a
               # severity: warn
 ```
 
-**28- add unit tests to staging's schema.yml: accepted values**
+**27- add unit tests to staging's schema.yml: accepted values**
 ```yml
 # line 80
         data_tests:
@@ -527,9 +530,9 @@ Note: Freshness can be tested on database and tables, with or without a loaded_a
               severity: warn
 ```
 
-**29- version control with git**  
+**28- version control with git**  
 
-**30- run with test_vars set to false, and deploy to prod**
+**29- run with test_vars set to false, and deploy to prod**
 ```shell
 ```
 
