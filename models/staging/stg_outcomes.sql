@@ -12,7 +12,8 @@ select
     -- outcome
     cast(sale_flag as integer) as sale_flag,
     -- timestamps
-    cast(sale_time as timestamp) as sale_time
+    cast(sale_time as timestamp) as sale_time,
+    now() as insert_date
 from cte_outcomes
 
 
