@@ -15,7 +15,7 @@ Try running the following commands:
 - Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices  
   
 
-### Steps
+### Demo 1
 **1- create a virutal environment**  
 ```shell
 python -m venv dbt-env              # create the environment  
@@ -509,6 +509,8 @@ models:
         description: The timestamp of the sale interaction
 ```
 
+### Demo 2  
+
 **26- add unit tests to staging's schema.yml: freshness test**
 ```yml
         freshness:
@@ -529,6 +531,9 @@ Note: Freshness can be tested on database and tables, with or without a loaded_a
           - not_null:
               severity: error
               # severity: warn
+```
+```shell
+dbt test --select test_type:data
 ```
 
 **28- add unit tests to staging's schema.yml: accepted values**
