@@ -442,7 +442,7 @@ models:
   - name: stg_callrecords
     description: >
       Staging of the call records data where the data is type case to its correct format as illustrated below in the column data types,
-      and an insert_date column is created to indicate when the data was staged. 
+      and an insert_time column is created to indicate when the data was staged. 
     columns:
       - name: call_id
         data_type: integer
@@ -478,10 +478,14 @@ models:
           D = Southwest
           E = West Coast
 
+      - name: insert_time
+        data_type: timestamp without time zone
+        description: Data staging time
+
   - name: stg_outcomes
     description: >
       Staging of the outcomes data where the data is type case to its correct format as illustrated below in the column data types, 
-      and an insert_date column is created to indicate when the data was staged. 
+      and an insert_time column is created to indicate when the data was staged. 
     columns:
       - name: sale_id
         data_type: integer
@@ -502,13 +506,17 @@ models:
       - name: sale_time
         data_type: timestamp without time zone
         description: The timestamp of the sale interaction
+
+      - name: insert_time
+        data_type: timestamp without time zone
+        description: Data staging time        
 ```
 
 **26- add a freshness test to `schema.yml` under the staging directory**
 ```yml
         freshness:
-          warn_after: {count: 3, period: minute}
-          # error_after: {count: 6, period: hour}
+          warn_after: {count: 24, period: hour}
+          # error_after: {count: 48, period: hour}
         loaded_at_field: sale_time::timestamp
 ```
 ```shell
