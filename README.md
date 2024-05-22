@@ -511,7 +511,6 @@ models:
 
 **26- add unit tests to staging's schema.yml: freshness test**
 ```yml
-# line 24        
         freshness:
           warn_after: {count: 3, period: minute}
           # error_after: {count: 6, period: hour}
