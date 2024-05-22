@@ -28,7 +28,7 @@ dbt-env\Scripts\activate            # activate the environment for Windows
 
 **3- install dbt and postgres adaptor**   
 ```shell
-python -m pip install dbt-core dbt-postgres  
+python -m pip install dbt-core dbt-postgres   # install dbt and the appropriate adaptors
 ```
 
 **4- validate installation**  
@@ -36,27 +36,28 @@ python -m pip install dbt-core dbt-postgres
 dbt --version  
 ```
 
-**5- change dbt environment file to point to local profiles.yml instead of default one in user directory**follow the prompt**   
+**5- change dbt environment file to point to the location where the  `profiles.yml` file will be created. By default, dbt will use the user home directory**
 ```shell
 $env:DBT_PROFILES_DIR="C:\Users\mina.sonbol\Documents\dbt_projects\dbt_demo_1"
 ```  
 
-**6- encrypt password**   
+**6- save the db password as an environment variable**   
 ```shell
 $env:DB_PASSWORD = "sample_password"  
 echo $env:DB_PASSWORD  
 # change password to ${DB_PASSWORD} in profiles.yml  
 ```
 
-**7- create the profile.yml file in the project directory or the user's home directory and setup the db connection**   
+**7- modify the `profile.yml` file, and setup a prod target**   
 ```shell
 dbt init my-project
 ```
 
 ```yaml
 my_dbt_demo:  
+  target: dev
   outputs:   
-    my_dev_db:  
+    dev:  
       type: postgres  
       host: localhost  
       port: 5432  
@@ -66,7 +67,7 @@ my_dbt_demo:
       schema: dev  
       threads: 1  
         
-    my_prod_db:  
+    prod:  
       type: postgres  
       host: localhost  
       port: 5432  
@@ -79,11 +80,11 @@ my_dbt_demo:
  
 **8- test connection**  
 ```shell
-dbt debug --target my_dev_db  
-dbt debug --target my_prod_db  
+dbt debug --target dev  
+dbt debug --target prod  
 ```
 
-**9- double check the profile used in the dbt_project.yml file, and add the models under the models section**
+**9- double check the profile used in the `dbt_project.yml` file, and add the models under the models section**
 ```yml
 
 # Name your project! Project names should contain only lowercase characters
@@ -128,9 +129,9 @@ models:
       +docs:
           node_color: "red"
 ```
-**10- create a new folder under models called staging**  
+**10- create a new directory under models called "Staging"**  
 
-**11- create a new file under staging called schema.yml, and define the source tables**
+**11- create a new file called `schema.yml` under the staging directory, and define the sources**
 ```yaml
 version: 2
 
@@ -150,10 +151,8 @@ models:
   - name: stg_outcomes
     description: ""
 ```
-**12- create a new file called stg_callrecords.sql under the staging folder**
+**12- create a new file called `stg_callrecords.sql` under the staging directory**
 ```sql
-{{ config(materialized='table') }}
-
 with cte_callrecords as (
     select 
         *,
@@ -184,10 +183,8 @@ where rn = 1
 
 {% endif %}
 ``` 
-**13- create a new file called stg_outcomes.sql under the staging folder**
+**13- create a new file called `stg_outcomes.sql` under the staging directory**
 ```sql
-{{ config(materialized='table') }}
-
 with cte_outcomes as (
     select *
     from {{ source('staging', 'outcomes') }}
@@ -211,9 +208,9 @@ from cte_outcomes
 
 {% endif %}
 ```
-**14- create a new folder under models callded core**  
+**14- create a new directory under models callded "Core"**  
 
-**15- create a new file called schema.yml under the core folder**
+**15- create a new file called `schema.yml` under the core directory**
 ```yaml
 version: 2
 
@@ -223,9 +220,8 @@ models:
   - name: vaca
     description: ""
 ```
-**16- create a new file called aca.sql under the core folder**
+**16- create a new file called `aca.sql` under the core directory**
 ```sql
-{{ config(materialized='table') }}
 with cte_calls as (
     select c.*
     from {{ ref('stg_callrecords') }} c 
@@ -251,7 +247,7 @@ with cte_calls as (
 
 {% endif %}
 ```
-**17- create a new file called vaca.sql under the core folder**
+**17- create a new file called `vaca.sql` under the core directory**
 ```sql
 {{ 
     config(
@@ -270,9 +266,9 @@ from {{ref('aca')}}
 
 {% endif %}
 ```
-**18- create a new directory called reporting under models**  
+**18- create a new directory under models called "Reporting"**  
 
-**19- create a new file called schema.yml under the reporting folder**
+**19- create a new file called `schema.yml` under the reporting directory**
 ```yml
 version: 2
 
@@ -284,10 +280,8 @@ models:
   - name: site_analysis_pivot
     description: ""
 ```
-**20- create a new file called portal.sql under the reporting folder**
+**20- create a new file called `portal.sql` under the reporting directory**
 ```sql
-{{ config(materialized='view') }}
-
 with cte_aca as (
     select 
         *
@@ -326,7 +320,7 @@ from cte_incr
 
 {% endif %}
 ```
-**21- create a new file called site_analysis.sql under the reporting folder**
+**21- create a new file called `site_analysis.sql` under the reporting directory**
 ```sql
 with cte_aca as (
     select 
@@ -368,7 +362,7 @@ from cte_incr
 
 {% endif %}
 ```
-**22- create a new file called site_analysis_pivot.sql under the reporting folder**
+**22- create a new file called `site_analysis_pivot.sql` under the directory folder**
 ```sql
 {% set categories = dbt_utils.get_column_values(ref('site_analysis'), 'calldate') %}
 
@@ -400,7 +394,7 @@ from pivoted_view
 {% endif %}
 ```
 
-**23- setup packages.yml and download packages**
+**23- setup `packages.yml` file**
 ```yml
 packages:
   - package: dbt-labs/dbt_utils
@@ -418,7 +412,9 @@ dbt docs generate
 dbt docs serve
 ```
 
-**25- add documentation to staging's schema.yml**
+### Demo 2  
+
+**25- add documentation to `schema.yml` under the staging directory**
 ```yml
 version: 2
 
@@ -427,7 +423,6 @@ sources:
     database: new_sample_db
     schema: dev
 
-    # loaded_at_field: record_loaded_at
     tables:
       - name: callrecords
         description: >
@@ -509,9 +504,7 @@ models:
         description: The timestamp of the sale interaction
 ```
 
-### Demo 2  
-
-**26- add unit tests to staging's schema.yml: freshness test**
+**26- add a freshness test to `schema.yml` under the staging directory**
 ```yml
         freshness:
           warn_after: {count: 3, period: minute}
@@ -523,7 +516,7 @@ dbt source freshness
 ```
 Note: Freshness can be tested on database and tables, with or without a loaded_at_field.
 
-**27- add unit tests to staging's schema.yml: primary key test**
+**27- define a data test: primary key (unique and not_null) to `schema.yml` under the staging directory**
 ```yml
         data_tests:
           - unique:
@@ -536,7 +529,7 @@ Note: Freshness can be tested on database and tables, with or without a loaded_a
 dbt test --select test_type:data
 ```
 
-**28- add unit tests to staging's schema.yml: accepted values**
+**28- define a data test: accepted values to `schema.yml` under the staging directory**
 ```yml
         data_tests:
           - accepted_values:
@@ -551,7 +544,10 @@ dbt test --select test_type:data
 dbt build --target prod --vars '{is_test_run: false}'
 ```
 
+***
+
 ### git commands  
+```shell
 echo "# dbt-demo" >> README.md  
 git init  
 git add README.md  
@@ -559,12 +555,14 @@ git commit -m "first commit"
 git branch -M main  
 git remote add origin https://github.com/msonbol-afiniti/dbt-demo.git  
 git push -u origin main  
-  
+```  
+***
 
 ### dbt commands  
+```shell
 dbt build  
 dbt test  
 dbt run  
 dbt docs generate  
 dbt docs serve  
-
+```
