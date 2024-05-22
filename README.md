@@ -177,7 +177,7 @@ select
 from cte_callrecords
 where rn = 1
 
--- dbt build --select <model.sql> --vars '{'is_test_run: false}'
+-- dbt build --select <model.sql> --vars '{is_test_run: false}'
 {% if var('is_test_run', default=true) %}
 
   limit 100
@@ -204,7 +204,7 @@ select
     now() as insert_time
 from cte_outcomes
 
--- dbt build --select <model.sql> --vars '{'is_test_run: false}'
+-- dbt build --select <model.sql> --vars '{is_test_run: false}'
 {% if var('is_test_run', default=true) %}
 
   limit 100
@@ -244,7 +244,7 @@ with cte_calls as (
     and c.cust_id = s.cust_id 
     and s.sale_time >= c.starttime and s.sale_time <= c.endtime 
 
--- dbt build --select <model.sql> --vars '{'is_test_run: false}'
+-- dbt build --select <model.sql> --vars '{is_test_run: false}'
 {% if var('is_test_run', default=true) %}
 
   limit 100
@@ -263,7 +263,7 @@ with cte_calls as (
 select *
 from {{ref('aca')}}
 
--- dbt build --select <model.sql> --vars '{'is_test_run: false}'
+-- dbt build --select <model.sql> --vars '{is_test_run: false}'
 {% if var('is_test_run', default=true) %}
 
   limit 100
@@ -291,10 +291,10 @@ models:
 with cte_aca as (
     select 
         *
-    from {{ ref('aca') }} aca
+    from {{ ref('vaca') }} aca
 ), cte_portal as (
     select
-        date_trunc('day',starttime)::date as calldate, 
+      date_trunc('day',starttime)::date as calldate, 
     	sum(case when benchmark=1 then 1 else 0 end) as on_calls ,
     	sum(case when benchmark=0 then 1 else 0 end) as off_calls ,
     	sum(case when benchmark=1 then sale_flag else 0 end) on_sales,
@@ -319,7 +319,7 @@ with cte_aca as (
 select * 
 from cte_incr
 
--- dbt build --select <model.sql> --vars '{'is_test_run: false}'
+-- dbt build --select <model.sql> --vars '{is_test_run: false}'
 {% if var('is_test_run', default=true) %}
 
   limit 100
@@ -328,16 +328,14 @@ from cte_incr
 ```
 **21- create a new file called site_analysis.sql under the reporting folder**
 ```sql
-{{ config(materialized='view') }}
-
 with cte_aca as (
     select 
-        *
-    from {{ ref('aca') }} aca
+      *
+    from {{ ref('vaca') }} aca
 ), cte_portal as (
     select
-        date_trunc('day',starttime)::date as calldate, 
-        agent_site,
+      date_trunc('day',starttime)::date as calldate, 
+      agent_site,
     	sum(case when benchmark=1 then 1 else 0 end) as on_calls ,
     	sum(case when benchmark=0 then 1 else 0 end) as off_calls ,
     	sum(case when benchmark=1 then sale_flag else 0 end) on_sales,
@@ -347,7 +345,7 @@ with cte_aca as (
 ), cte_incr as (
     select 
     	calldate,
-        agent_site,
+      agent_site,
     	on_calls,
     	off_calls,
     	on_calls+off_calls as total_calls,
@@ -363,7 +361,7 @@ with cte_aca as (
 select * 
 from cte_incr
 
--- dbt build --select <model.sql> --vars '{'is_test_run: false}'
+-- dbt build --select <model.sql> --vars '{is_test_run: false}'
 {% if var('is_test_run', default=true) %}
 
   limit 100
@@ -394,7 +392,7 @@ select
     {%endfor%}
 from pivoted_view
 
--- dbt build --select <model.sql> --vars '{'is_test_run: false}'
+-- dbt build --select <model.sql> --vars '{is_test_run: false}'
 {% if var('is_test_run', default=true) %}
 
   limit 100
@@ -519,11 +517,13 @@ models:
           # error_after: {count: 6, period: hour}
         loaded_at_field: sale_time::timestamp
 ```
+```shell
+dbt source freshness
+```
 Note: Freshness can be tested on database and tables, with or without a loaded_at_field.
 
 **27- add unit tests to staging's schema.yml: primary key test**
 ```yml
-# line 38
         data_tests:
           - unique:
               severity: warn
@@ -534,7 +534,6 @@ Note: Freshness can be tested on database and tables, with or without a loaded_a
 
 **28- add unit tests to staging's schema.yml: accepted values**
 ```yml
-# line 80
         data_tests:
           - accepted_values:
               values: ['A','B','C','D','E']
@@ -545,6 +544,7 @@ Note: Freshness can be tested on database and tables, with or without a loaded_a
 
 **30- run with test_vars set to false, and deploy to prod**
 ```shell
+dbt build --target prod --vars '{is_test_run: false}'
 ```
 
 ### git commands  
