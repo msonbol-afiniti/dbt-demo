@@ -53,7 +53,7 @@ echo $env:DB_PASSWORD
 dbt init my-project
 ```
 
-```yaml
+```yml
 my_dbt_demo:  
   target: dev
   outputs:   
@@ -132,7 +132,7 @@ models:
 **10- create a new directory under models called "Staging"**  
 
 **11- create a new file called `schema.yml` under the staging directory, and define the sources**
-```yaml
+```yml
 version: 2
 
 sources:
@@ -211,7 +211,7 @@ from cte_outcomes
 **14- create a new directory under models callded "Core"**  
 
 **15- create a new file called `schema.yml` under the core directory**
-```yaml
+```yml
 version: 2
 
 models:
