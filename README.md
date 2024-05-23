@@ -140,7 +140,6 @@ sources:
     database: new_sample_db
     schema: dev
 
-    # loaded_at_field: record_loaded_at
     tables:
       - name: callrecords
       - name: outcomes
@@ -535,6 +534,10 @@ Note: Freshness can be tested on database and tables, with or without a loaded_a
 ```
 ```shell
 dbt test --select test_type:data
+```  
+Also, model build will fail (just make sure to set the is_test_var to false)   
+```shell
+dbt build --select stg_callrecords --vars '{is_test_var: false}'
 ```
 
 **28- define a data test: accepted values to `schema.yml` under the staging directory**
