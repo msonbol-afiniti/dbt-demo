@@ -38,7 +38,7 @@ dbt --version
 
 **5- change dbt environment file to point to the location where the  `profiles.yml` file will be created. By default, dbt will use the user home directory**
 ```shell
-$env:DBT_PROFILES_DIR="C:\Users\mina.sonbol\Documents\dbt_projects\dbt_demo_1"
+$env:DBT_PROFILES_DIR="C:\Users\mina.sonbol\Documents\dbt_projects\dbt_demo"
 ```  
 
 **6- save the db password as an environment variable**   
